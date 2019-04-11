@@ -1,0 +1,34 @@
+h1 {color:red;}
+_selectors => can be id, class, attr, names
+    --property
+          __value
+          
+{p-v list}
+
+background-image: url("path/filename");
+background-repeat:...;
+p{
+    border:
+    padding: top right bottom left;
+}
+
+css box model:
+margins(outermost)|borders|padding|text(innermost)
+
+animations
+keyframes or webkit-keyframes{
+    example{
+        from{background-color:red;}
+        to{background-color:yellow;}
+    }
+}
+div{
+    height:100px;
+    animation-name: examples;
+    animation-duration:45;
+    delay
+    iteration-count
+    direction
+    timing-function(linear, ease, ease-in, ease-out, ease-in-out)
+
+}
