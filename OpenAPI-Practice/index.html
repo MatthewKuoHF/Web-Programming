@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        </head>
+        <body>
+            <style type="text/css">
+                table, th, tr, td{border-color: black;border-collapse:collapse;border-style:solid;border-width:1px;border-collapse:collapse;padding:10px 5px;font-family:Arial;background-color: white;}
+                img{
+                    width:15vw;
+                    height:30vh;
+                }
+                #city{
+                    font-size: 18px;
+                }
+                background-imgage{
+                    
+                }
+            </style>
+            <p>Zip code / city: <input id="zipcode" type="text"></p>
+            <button id="getWeather">Submit</button><br/>
+            <p id="city"></p>
+            <table>
+                <tr>
+                    <td>Today</td>
+                    <td>Tomorrow</td>
+                    <td>2 days later</td>
+                    <td>3 days later</td>
+                    <td>4 days later</td>
+                </tr>
+                <tr>
+                    <td id="td1"></td>
+                    <td id="td2"></td>
+                    <td id="td3"></td>
+                    <td id="td4"></td>
+                    <td id="td5"></td>
+                </tr>
+            </table>
+            <script> 
+                // Create a request variable and assign a new XMLHttpRequest object to it.
+                // Replace ./data.json with your JSON feed
+
+                function converKtoF(k){
+                    return (k*9/5-459.67);
+                }
+                function req(reurl){
+                    let xhr = new XMLHttpRequest;
+                    //Call the open function, GET-type of request, url, true-asynchronous
+                    xhr.open('GET', reurl, true)
+                    //call the onload 
+                    xhr.onload = function(){
+                            //check if the status is 200(means everything is okay)
+                            if (this.status === 200) 
+                                {
+                                    console.log(JSON.parse(this.responseText));
+                                    $('#city').html('City: '+JSON.parse(this.responseText).city.name);
+                                    //return server response as an object with JSON.parse
+                                    var lst=JSON.parse(this.responseText).list;
+                                    //console.log(JSON.parse(this.responseText));
+                                    var tmp=[];
+                                    var idn="";
+                                    var image="";
+                                    var fstr="";
+                                    for(var i=0; i<5; i++){
+                                        tmp[i]=converKtoF(lst[i*8].main.temp).toFixed(1);
+                                        if(tmp[i]<40){
+                                            image='<img src="snow.gif"></img>';
+                                        }
+                                        else if(tmp[i]>=40 && tmp[i]<45){
+                                            image='<img src="cold.gif"></img>';
+                                        }
+                                        else if(tmp[i]>=45 && tmp[i]<50){
+                                            image='<img src="fall.gif"></img>';
+                                        }
+                                        else{
+                                            image='<img src="hot.gif"></img>';
+                                        }
+                                        idn="#td"+String(i+1);
+                                        fstr='<p>Temperature: '+tmp[i]+'°F</p><p style="font-weight:800;">'+lst[i*8].weather[0].description+"</p>"+image;
+                                        $(idn).html(fstr);
+                                    }
+                                    bgurl="";
+                                    if(tmp[0]<40){
+                                        bgurl = 'url(snow_bg.gif)';
+                                    }
+                                    else if(tmp[0]>=40 && tmp[0]<45){
+                                        bgurl = 'url(cold_bg.gif)';
+                                    }
+                                    else if(tmp[0]>=45 && tmp[0]<50){
+                                        bgurl = 'url(fall_bg.gif)';
+                                    }
+                                    else{
+                                        bgurl = 'url(hot_bg.gif)';
+                                    }
+                                    
+                                    $('body').css('background-image', bgurl);
+                                }
+                    }
+                    //call send
+                    xhr.send();
+                    //Common Types of HTTP Statuses
+                    // 200: OK
+                    // 404: ERROR
+                    // 403: FORBIDDEN
+                    
+                }
+                $(document).ready(function(){
+                    var zipc="30003";
+                    var reurl='https://api.openweathermap.org/data/2.5/forecast?zip='+zipc+',us&appid=3a607177aa9a9f7b20ef360aada87413';
+                    
+                    $('#getWeather').click(function(){
+                        zipc=$('#zipcode').val();
+                        if(isNaN(zipc)){
+                            reurl='https://api.openweathermap.org/data/2.5/forecast?q='+zipc+',us&appid=3a607177aa9a9f7b20ef360aada87413';
+                            //console.log(reurl);
+                        }
+                        else{
+                           reurl='https://api.openweathermap.org/data/2.5/forecast?zip='+zipc+',us&appid=3a607177aa9a9f7b20ef360aada87413';
+                            //console.log(reurl);
+                        }
+                        req(reurl);
+                    })                    
+                })
+            </script>
+           
+        </body>
+    </html>
